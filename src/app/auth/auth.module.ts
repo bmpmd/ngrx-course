@@ -21,9 +21,9 @@ import * as fromAuth from './reducers';
         RouterModule.forChild([{path: '', component: LoginComponent}]),
         StoreModule.forFeature(
             'auth',
-            fromAuth.reducers
+            fromAuth.authReducer
         ),
-        StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducers, { metaReducers: fromAuth.metaReducers })
+   
 
     ],
     declarations: [LoginComponent],
