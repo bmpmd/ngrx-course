@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {map} from 'rxjs/operators';
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from '@angular/router';
 import { AuthState } from './auth/reducers';
+import { isLoggedIn, isLoggedOut } from './auth/auth.selectors';
 
 @Component({
     selector: 'app-root',
@@ -28,13 +29,12 @@ export class AppComponent implements OnInit {
     ngOnInit() {
 
       this.isLoggedIn$ = this.store.pipe(
-        map(state => !!state["auth"].user )
-
+        select(isLoggedIn)
       )
       this.isLoggedOut$ = this.store.pipe(
-        map(state => !state["auth"].user)
+        select(isLoggedOut)
       )
-      
+
       this.router.events.subscribe(event  => {
         switch (true) {
           case event instanceof NavigationStart: {
