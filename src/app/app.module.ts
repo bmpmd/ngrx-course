@@ -56,7 +56,16 @@ const routes: Routes = [
       MatProgressSpinnerModule,
       MatListModule,
       MatToolbarModule,
-      StoreModule.forRoot(reducers, {metaReducers}),
+      StoreModule.forRoot(reducers, {
+        metaReducers,
+        runtimeChecks: {
+          strictStateImmutability: true,
+          strictActionImmutability: true,
+          strictActionSerializability: true,
+          strictStateSerializability: true
+        }
+
+      }),
       EffectsModule.forRoot([]),
       StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
       AuthModule.forRoot(),
