@@ -10,6 +10,7 @@ import {
 } from '@ngrx/store';
 import { User } from '../model/user.model';
 import { AuthActions } from '../action-types';
+import { routerReducer } from '@ngrx/router-store';
 
 export const authFeatureKey = 'auth';
 
@@ -39,4 +40,10 @@ export const authReducer = createReducer(
 
 );
 
-export const metaReducers: MetaReducer<AuthState>[] = isDevMode() ? [] : [];
+export interface AppState{
+
+}
+export  const reducers: ActionReducerMap<AppState> = {
+  router: routerReducer
+};
+export const metaReducers: MetaReducer<AppState>[] = isDevMode() ? [] : [];

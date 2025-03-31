@@ -1,3 +1,4 @@
+import { metaReducers } from './auth/reducers/index';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -22,6 +23,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { EntityDataModule } from '@ngrx/data';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthGuard } from './auth/auth.guard';
+import { reducers } from './auth/reducers';
 
 
 const routes: Routes = [
@@ -54,10 +56,14 @@ const routes: Routes = [
       MatProgressSpinnerModule,
       MatListModule,
       MatToolbarModule,
-      StoreModule.forRoot({}),
+      StoreModule.forRoot(reducers, {metaReducers}),
       EffectsModule.forRoot([]),
       StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-      AuthModule.forRoot()
+      AuthModule.forRoot(),
+      StoreRouterConnectingModule.forRoot({
+        stateKey: 'router',
+        routerState: RouterState.Minimal
+      })
     ],
   providers: [provideHttpClient(withInterceptorsFromDi())]
 })
