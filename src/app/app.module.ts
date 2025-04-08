@@ -72,7 +72,8 @@ const routes: Routes = [
       StoreRouterConnectingModule.forRoot({
         stateKey: 'router',
         routerState: RouterState.Minimal
-      })
+      }),
+      EntityDataModule.forRoot({})
     ],
   providers: [provideHttpClient(withInterceptorsFromDi())]
 })
