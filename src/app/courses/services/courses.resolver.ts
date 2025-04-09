@@ -9,6 +9,7 @@ import { map } from "rxjs/operators";
 export class CoursesResolver implements Resolve<boolean>{
     
     constructor(private coursesService: CourseEntityService){}
+    
     resolve(route: ActivatedRouteSnapshot,
             state: RouterStateSnapshot): Observable<boolean>{
         //returns data: list of courses 
