@@ -1,24 +1,26 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Course} from '../model/course';
-import {Observable, of} from 'rxjs';
-import {Lesson} from '../model/lesson';
-import {concatMap, delay, filter, first, map, shareReplay, tap, withLatestFrom} from 'rxjs/operators';
-import {CoursesHttpService} from '../services/courses-http.service';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Course } from '../model/course';
+import { Observable, of } from 'rxjs';
+import { Lesson } from '../model/lesson';
+import { concatMap, delay, filter, first, map, shareReplay, tap, withLatestFrom } from 'rxjs/operators';
+import { CoursesHttpService } from '../services/courses-http.service';
 import { CourseEntityService } from '../services/course-entity.service';
 import { LessonEntityService } from '../services/lesson-entity.service';
 
 
 @Component({
-    selector: 'course',
-    templateUrl: './course.component.html',
-    styleUrls: ['./course.component.css'],
-    standalone: false
+  selector: 'course',
+  templateUrl: './course.component.html',
+  styleUrls: ['./course.component.css'],
+  standalone: false
 })
 export class CourseComponent implements OnInit {
 
   course$: Observable<Course>;
 
+
+  loading$: Observable<boolean>;
   lessons$: Observable<Lesson[]>;
 
   displayedColumns = ['seqNo', 'description', 'duration'];
@@ -40,21 +42,46 @@ export class CourseComponent implements OnInit {
     this.course$ = this.coursesService.entities$
       .pipe(
         //loop thru courses list observable and find first match against url prop
-        map(courses => courses.find(course=> course.url == courseUrl))
+        map(courses => courses.find(course => course.url == courseUrl))
       )
 
-    // this.lessons$ = this.course$.pipe(
-    //   concatMap(course => this.coursesService.findLessons(course.id)),
-    //   tap(console.log)
-    // );
 
-    this.lessons$ = of([])
+    this.lessons$ = this.lessonsService.entities$
+      .pipe(
+        //combine w course observable to get course id 
+        withLatestFrom(this.course$),
+        //here we have the lesson and course to load a page of lessons. call the method helper 
+        tap(([lessons, course]) => {
+          if (this.nextPage == 0) {
+            this.loadLessonsPage(course)
+          }
+        }),
+        //find matching lessons using course id with a tuple 
+        map(([lessons, course]) =>
+          lessons.filter(lesson => lesson.courseId == course.id))
+      )
+
+    //define loading boolean 
+    this.loading$ = this.lessonsService.loading$.pipe(
+      delay(0)
+    )
+
 
   }
 
 
   loadLessonsPage(course: Course) {
+    //call backend, fetch list of lessons, add to store
+    // use lessons entity service! 
+    // except we only fetch only the specific course! 
+    this.lessonsService.getWithQuery({
+      'courseId': course.id.toString(),
+      'pageNumber': this.nextPage.toString(),
+      'pageSize': '3'
+    })
 
+    //finally, next page is incremented. 
+    this.nextPage += 1
   }
 
 }
